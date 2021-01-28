@@ -23,7 +23,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Open", style: .plain, target: self, action: #selector(openTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Open", style: .plain, target: self, action: #selector(openTapped))
         
         progressView = UIProgressView(progressViewStyle: .default) // tem tambem o modo .bar, ele nao mostra uma linha vazia, mas nesse caso o .default fica melhor
         progressView.sizeToFit() // Enquadra conteudo para ver inteiro
@@ -31,10 +31,14 @@ class ViewController: UIViewController, WKNavigationDelegate {
         let progressButton = UIBarButtonItem(customView: progressView) // Cria um BarButton com uma custom view
         
         // Itens para toolbar
+        let goBack = UIBarButtonItem(image: UIImage(systemName: "arrow.backward"), style: .plain, target: webView, action: #selector(webView.goBack))
+        let goForward = UIBarButtonItem(image: UIImage(systemName: "arrow.right"), style: .plain, target: webView, action: #selector(webView.goForward))
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let refresh = UIBarButtonItem(barButtonSystemItem: .refresh, target: webView, action: #selector(webView.reload))
         
-        toolbarItems = [progressButton, spacer, refresh] // define os itens
+        navigationItem.rightBarButtonItem = refresh
+        
+        toolbarItems = [goBack, spacer, progressButton, spacer, goForward] // define os itens
         navigationController?.isToolbarHidden = false // mostra a toolbar
         // Toolbar -> barra embaixo
         
