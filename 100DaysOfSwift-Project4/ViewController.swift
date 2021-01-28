@@ -11,7 +11,7 @@ import WebKit
 class ViewController: UIViewController, WKNavigationDelegate {
     var webView: WKWebView!
     var progressView: UIProgressView!
-    var websites = ["apple.com", "github.com"]
+    var websites = ["google.com", "apple.com", "github.com"]
     
     override func loadView() {
         // Muda a view principal para carregar o webView ao invés do storyboard
@@ -103,7 +103,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
             }
         }
         
-        decisionHandler(.cancel)
+        cancelLoading(decisionHandler)
     }
     
     // Necessario implementar devido ai KVO
@@ -111,6 +111,16 @@ class ViewController: UIViewController, WKNavigationDelegate {
         if keyPath == "estimatedProgress" {
             progressView.progress = Float(webView.estimatedProgress)
         }
+    }
+    
+    func cancelLoading(_ decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        let alertController = UIAlertController(title: "This website is blocked!", message: nil, preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "Ok", style: .default))
+        
+        present(alertController, animated: true)
+        
+        decisionHandler(.cancel)
     }
 }
 
