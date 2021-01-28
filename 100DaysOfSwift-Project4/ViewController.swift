@@ -23,6 +23,14 @@ class ViewController: UIViewController, WKNavigationDelegate {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Open", style: .plain, target: self, action: #selector(openTapped))
         
+        // Itens para toolbar
+        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let refresh = UIBarButtonItem(barButtonSystemItem: .refresh, target: webView, action: #selector(webView.reload))
+        
+        toolbarItems = [spacer, refresh] // define os itens
+        navigationController?.isToolbarHidden = false // mostra a toolbar
+        // Toolbar -> barra embaixo
+        
         let url = URL(string: "https://google.com")!
         
         webView.load(URLRequest(url: url)) // Necessario fazer o request, se nao webView nao carrega a pag
