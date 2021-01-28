@@ -11,6 +11,7 @@ import WebKit
 class ViewController: UIViewController, WKNavigationDelegate {
     var webView: WKWebView!
     var progressView: UIProgressView!
+    var websites = ["apple.com", "github.com"]
     
     override func loadView() {
         // Muda a view principal para carregar o webView ao invés do storyboard
@@ -37,7 +38,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         navigationController?.isToolbarHidden = false // mostra a toolbar
         // Toolbar -> barra embaixo
         
-        let url = URL(string: "https://google.com")!
+        let url = URL(string: "https://\(websites[0])")!
         
         webView.load(URLRequest(url: url)) // Necessario fazer o request, se nao webView nao carrega a pag
         webView.allowsBackForwardNavigationGestures = true // Passar dedo pra ir/votar pag, sempre bom ter
@@ -49,7 +50,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
          */
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
         /**
-        o options .new manda junto o novo valor, e nao apenas diz que mudou, .old o antigo e etc...
+        o options .new manda junto o novo valor, e nao apenas diz que mudou, .old o fantigo e etc...
         self no observer pois é esta classe que vai observar as mudanças
          
         keyPath funciona como o #selector... Faz com que o compilador verifique que o valor existe de fato ali
@@ -61,8 +62,10 @@ class ViewController: UIViewController, WKNavigationDelegate {
     @objc func openTapped() {
         let alertController = UIAlertController(title: "Open page...", message: nil, preferredStyle: .actionSheet)
         
-        alertController.addAction(UIAlertAction(title: "apple.com", style: .default, handler: openPage))
-        alertController.addAction(UIAlertAction(title: "github.com", style: .default, handler: openPage))
+        for website in websites {
+            alertController.addAction(UIAlertAction(title: website, style: .default, handler: openPage))
+        }
+        
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
         
@@ -81,6 +84,26 @@ class ViewController: UIViewController, WKNavigationDelegate {
     // necessario webView delegate ser para esta classe
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         title = webView.title
+    }
+    
+    /**
+     @escaping diz que a closure pode ser chamada depois do metodo, por exemplo:
+        chamar o decisionHandler apos o usuario fazer algo (perguntar algo, etc), e nao na execucao deste metodo
+     */
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        let url = navigationAction.request.url
+        
+        // nem todos sites tem host, necessario checkar
+        if let host = url?.host {
+            for website in websites {
+                if host.contains(website) {
+                    decisionHandler(.allow)
+                    return
+                }
+            }
+        }
+        
+        decisionHandler(.cancel)
     }
     
     // Necessario implementar devido ai KVO
